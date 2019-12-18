@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
-      <h3 class="title">EL-ADMIN 后台管理系统</h3>
+      <h3 class="title">Ming Blog 后台管理系统</h3>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon"/>
@@ -57,8 +57,8 @@ export default {
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', message: '用户名不能为空' }],
-        password: [{ required: true, trigger: 'blur', message: '密码不能为空' }],
-        code: [{ required: true, trigger: 'change', message: '验证码不能为空' }]
+        password: [{ required: true, trigger: 'blur', message: '密码不能为空' }]
+        // code: [{ required: true, trigger: 'change', message: '验证码不能为空' }]
       },
       loading: false,
       redirect: undefined
@@ -73,7 +73,7 @@ export default {
     }
   },
   created() {
-    this.getCode()
+    // this.getCode()
     this.getCookie()
   },
   methods: {
@@ -98,12 +98,14 @@ export default {
       }
     },
     handleLogin() {
+      debugger;
       this.$refs.loginForm.validate(valid => {
+        debugger
         const user = {
           username: this.loginForm.username,
           password: this.loginForm.password,
           rememberMe: this.loginForm.rememberMe,
-          code: this.loginForm.code,
+          // code: this.loginForm.code,
           uuid: this.loginForm.uuid
         }
         if (user.password !== this.cookiePass) {
@@ -112,21 +114,25 @@ export default {
         if (valid) {
           this.loading = true
           if (user.rememberMe) {
-            Cookies.set('username', user.username, { expires: Config.passCookieExpires })
-            Cookies.set('password', user.password, { expires: Config.passCookieExpires })
-            Cookies.set('rememberMe', user.rememberMe, { expires: Config.passCookieExpires })
+            console.log('333')
+            this.loading = false
+            // Cookies.set('username', user.username, { expires: Config.passCookieExpires })
+            // Cookies.set('password', user.password, { expires: Config.passCookieExpires })
+            // Cookies.set('rememberMe', user.rememberMe, { expires: Config.passCookieExpires })
+            this.$router.push({ path: '/dashboard' })
           } else {
             Cookies.remove('username')
             Cookies.remove('password')
             Cookies.remove('rememberMe')
-          }
-          this.$store.dispatch('Login', user).then(() => {
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
-          }).catch(() => {
-            this.loading = false
-            this.getCode()
-          })
+          }         
+          // this.$store.dispatch('Login', user).then(() => {
+          //   console.log('----')
+          //   this.loading = false
+          //   this.$router.push({ path: this.redirect || '/' })
+          // }).catch(() => {
+          //   this.loading = false
+          //   this.getCode()
+          // })
         } else {
           console.log('error submit!!')
           return false
